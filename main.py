@@ -1,31 +1,42 @@
 import cv2
 import numpy as np
 
-# Capturing camera
-cap = cv2.VideoCapture(0)  # 0 means using the first free cam we have
+# Открытие видео с камеры ноутбука (optional)
+cap = cv2.VideoCapture(1)
+
+# Коэффициенты искажения для подушкообразной и бочковидной дисторсий
+k1, k2, p1, p2 = -0.5, -0.5, 0, 0   # k1, k2 - radial dist
+                                    # p1, p2 - tangential dist
+# k1, k2, p1, p2 = 0, 0, 0, 0
+# -0.75
+# 0.5, 0.13, 0, 0
 
 while True:
-    # Reading frames from camera | ret - return True due to everything is okay
-    ret, frame = cap.read()
+    # Захват кадра с камеры
+    ret, frame = cap.read(1)
 
-    # Checking for correctness
-    if not ret:
+    # Получение высоты и ширины кадра
+    height, width = frame.shape[:2]
+
+    # Генерация матрицы камеры
+    camera_matrix = np.array([[width, 0, width / 2],
+                              [0, height, height / 2],
+                              [0, 0, 1]], dtype=np.float64)
+
+    # Генерация коэффициентов искажения (подушкообразная и бочковидная дисторсии)
+    distortion_coefficients = np.array([k1, k2, p1, p2, 0], dtype=np.float64)
+
+    # Применение искажения к кадру
+    distorted_frame = cv2.undistort(frame, camera_matrix, distortion_coefficients)
+
+    # Отображение оригинального кадра и кадра с дисторсиями
+    cv2.imshow('Original Frame', frame)
+    cv2.imshow('Distorted Frame', distorted_frame)
+
+    # Ожидание нажатия клавиши 'q' для выхода из цикла
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-    # Grayscale
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-    # Binarization
-    _, binary_image = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)
-
-    # Showing the windows
-    cv2.imshow('Binary Video', binary_image)
-    cv2.imshow('Default Video', frame)
-    # cv2.imshow('', gray)
-
-    if cv2.waitKey(1) == 27:  # 27 - code of button 'escape' | (1) запрос каждую миллисекунду
-        break
-
-# Closing the windows and turning off camera
+# Освобождение ресурсов и закрытие окон
 cap.release()
 cv2.destroyAllWindows()
