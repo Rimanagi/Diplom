@@ -5,7 +5,7 @@ import numpy as np
 cap = cv2.VideoCapture(1)
 
 # Коэффициенты искажения для подушкообразной и бочковидной дисторсий
-k1, k2, p1, p2 = -0.5, -0.5, 0, 0   # k1, k2 - radial dist
+k1, k2, p1, p2 = -0, -0, 0, 0   # k1, k2 - radial dist
                                     # p1, p2 - tangential dist
 # k1, k2, p1, p2 = 0, 0, 0, 0
 # -0.75
