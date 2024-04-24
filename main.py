@@ -13,15 +13,15 @@ k1, k2, p1, p2 = -0, -0, 0, 0   # k1, k2 - radial dist
 
 while True:
     # Захват кадра с камеры
-    ret, frame = cap.read(1)
+    ret, frame = cap.read()
 
     # Получение высоты и ширины кадра
     height, width = frame.shape[:2]
-
     # Генерация матрицы камеры
     camera_matrix = np.array([[width, 0, width / 2],
                               [0, height, height / 2],
                               [0, 0, 1]], dtype=np.float64)
+    # print(camera_matrix)
 
     # Генерация коэффициентов искажения (подушкообразная и бочковидная дисторсии)
     distortion_coefficients = np.array([k1, k2, p1, p2, 0], dtype=np.float64)
@@ -40,3 +40,4 @@ while True:
 # Освобождение ресурсов и закрытие окон
 cap.release()
 cv2.destroyAllWindows()
+
